@@ -32,6 +32,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-/Assets/*.meta
 /Assets/ANIMALS FULL PACK
 /Assets/Milkid Animal Agent AI
