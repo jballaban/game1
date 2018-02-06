@@ -19,13 +19,13 @@ namespace Game.Scripts.Animal
 			get { return _current; }
 			set
 			{
+				if (Mathf.Clamp(value, 0, max) == _current) return;
 				_current = Mathf.Clamp(value, 0, max);
 				if (bar != null)
 					bar.fillAmount = currentPercent;
 			}
 		}
 		public float currentPercent { get { return _current / max; } } // current value as a percent of max
-		bool regenerating; // true if object is currently regenerating
 		float _current; // internal current value
 
 		public virtual void Awake()
@@ -35,21 +35,10 @@ namespace Game.Scripts.Animal
 
 		public virtual void Update()
 		{
-			if (!regenerating && canRegen())
+			if (canRegen())
 			{
-				StartCoroutine("Regen");
+				current += regenPerSecond * Time.deltaTime;
 			}
-		}
-
-		IEnumerator Regen()
-		{
-			regenerating = true;
-			while (canRegen())
-			{
-				current += regenPerSecond;
-				yield return new WaitForSeconds(1);
-			}
-			regenerating = false;
 		}
 
 		bool canRegen()

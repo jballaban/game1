@@ -6,51 +6,78 @@ using System.Collections.Generic;
 
 namespace Game.Scripts.Animal
 {
-	public interface IAnimalAIBehaviour
+	public class Brain : MonoBehaviour
 	{
-		void think(Brain brain);
-	}
+		[Tooltip("The number of seconds to wait between reconsidering decisions")]
+		public float secondsBetweenThoughts = 1f;
+		WeightedDecision _active = null;
+		public WeightedDecision active { get { return _active; } }
+		WeightedDecision _next;
+		public WeightedDecision next { get { return _next; } }
+		List<WeightedDecision> decisions = new List<WeightedDecision>();
+		public Memory memory = new Memory();
+		List<AnimalAIBehaviour> behaviours;
 
-	public enum DecisionBlending
-	{
-		Exclusive,
-		Fallback,
-		Additive
-	}
-
-	public abstract class DecisionAction
-	{ }
-
-	public class DoNothingDecisionAction : DecisionAction
-	{
-		public static WeightedDecision instance = new WeightedDecision()
+		void Awake()
 		{
-			weight = 0,
-			action = new DoNothingDecisionAction()
+			behaviours = GetComponents<AnimalAIBehaviour>().ToList();
 		}
-	}
 
-	public class WalkToDecisionAction : DecisionAction
-	{
-		public Vector3 destination;
-	}
+		void Start()
+		{
+			StartCoroutine("Think");
+		}
 
-	public struct WeightedDecision
-	{
-		public float weight;
-		public DecisionAction action;
-	}
+		IEnumerator Think()
+		{
+			while (true)
+			{
+				Reset();
+				foreach (var behavour in behaviours)
+				{
+					var decision = behavour.Think(this);
+					if (decision != null && (_next == null || decision.weight >= _next.weight))
+						_next = decision;
+				}
+				Decide();
+				yield return new WaitForSeconds(secondsBetweenThoughts);
+			}
+		}
 
-	public class Brain
-	{
-		public WeightedDecision active;
-		public WeightedDecision next;
-		public Dictionary<DecisionBlending, WeightedDecision> decisions = new Dictionary<DecisionBlending, WeightedDecision>();
+		void Update()
+		{
+			if (_active == null) return;
+			if (_active.decision.completed)
+			{
+				_active.decision.behavour.StopDecision();
+				_active = null;
+			}
+			else
+				_active.decision.Update();
+		}
 
-		public void Reset()
+		void Reset()
 		{
 			decisions.Clear();
-			next = DoNothingDecisionAction.instance;
+			_next = null;
+			memory.Process();
 		}
+
+		void Decide()
+		{
+			if (_next == _active) return; // keep current decision
+			if (_active != null)
+			{
+				_active.decision.behavour.StopDecision();
+			}
+			_active = _next;
+			if (_active != null)
+			{
+				_active.decision.completed = false;
+				_active.decision.Start();
+			}
+			Debug.Log(_active.ToString());
+		}
+
 	}
 }
