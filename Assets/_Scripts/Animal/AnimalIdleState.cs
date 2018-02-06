@@ -2,33 +2,32 @@ using UnityEngine;
 
 namespace Game.Scripts.Animal
 {
-
-	public class AnimalIdleState : AnimalState
-	{
-		public float maxIdle;
-		float timer;
-		float idleTimer;
-
-		void OnEnable()
+	/* 
+		public class AnimalIdleState : AnimalState
 		{
-			timer = 0;
-			idleTimer = Random.Range(0f, maxIdle);
-			if (maxIdle == 0)
-			{
-				this.enabled = false;
-			}
-			AI.animator.SetBool("moving", false);
-			Debug.Log("Idle");
-		}
+			public float maxIdle;
+			float timer;
+			float idleTimer;
 
-		void Update()
-		{
-			timer += Time.deltaTime;
-			if (timer >= idleTimer)
+			void OnEnable()
 			{
-				AI.changeState(typeof(AnimalWanderState));
+				timer = 0;
+				idleTimer = Random.Range(0f, maxIdle);
+				if (maxIdle == 0)
+				{
+					this.enabled = false;
+				}
+				AI.animator.SetBool("moving", false);
 			}
-		}
-	}
+
+			void Update()
+			{
+				timer += Time.deltaTime;
+				if (timer >= idleTimer)
+				{
+					AI.changeState(typeof(AnimalWanderState));
+				}
+			}
+		} */
 
 }

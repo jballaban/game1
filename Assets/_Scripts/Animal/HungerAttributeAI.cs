@@ -1,33 +1,46 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Scripts.Animal
 {
 	public class HungerAttributeAI : AttributeAI
 	{
-		public float starvationAmount;
-		public float starvationDelay;
-		HealthAttributeAI health;
-		float starvationTimer;
+		[Tooltip("The amount of health to remove per second when hunger is at 0.  Set to 0 to disable starvation.  Can change at any time.")]
+		public float starvationPerSecond;
+		HealthAttributeAI health; // health attribute
+		bool starving = false; // true if object is currently starving
 
-		public override void Start()
+		public override void Awake()
 		{
-			base.Start();
+			base.Awake();
 			health = GetComponent<HealthAttributeAI>();
 		}
 
 		public override void Update()
 		{
 			base.Update();
-			if (getCurrent() == 0)
+			if (!starving && canStarve())
 			{
-				starvationTimer += Time.deltaTime;
-				if (starvationTimer >= starvationDelay)
-				{
-					if (health != null)
-						health.getHit(starvationAmount);
-					starvationTimer = 0;
-				}
+				StartCoroutine("Starve");
 			}
 		}
+
+		IEnumerator Starve()
+		{
+			starving = true;
+			while (canStarve())
+			{
+				health.current -= starvationPerSecond;
+				yield return new WaitForSeconds(1);
+			}
+			starving = false;
+		}
+
+		bool canStarve()
+		{
+			return starvationPerSecond != 0 && current == 0;
+		}
+
 	}
 }

@@ -1,128 +1,66 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Linq;
-using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Game.Scripts.Animal
 {
-	[RequireComponent(typeof(Animator))]
-	[RequireComponent(typeof(AnimalIdleState))]
+	public class AnimalWanderAI : MonoBehaviour, IAnimalAIBehaviour
+	{
+		[Tooltip("Distance the animal will wander in a single action")]
+		public float wanderDistance;
+		public void think(Brain brain)
+		{
+			brain.decisions.Add(DecisionBlending.Fallback, new WeightedDecision()
+			{
+				weight = 1f,
+				action = new WalkToDecisionAction()
+				{
+					destination = RandomNavSphere(transform.position, wanderDistance, -1)
+				}
+			});
+		}
+
+		Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
+		{
+			Vector3 randDirection = Random.insideUnitSphere * dist;
+			randDirection += origin;
+			NavMeshHit navHit;
+			NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
+			return navHit.position;
+		}
+	}
+
+	[RequireComponent(typeof(HealthAttributeAI))]
 	[RequireComponent(typeof(NavMeshAgent))]
 	public class AnimalAI : MonoBehaviour
 	{
-		/* 	enum Mood
-			{
-				Hungry,
-				Scared,
-				Bored,
-				Aggressive,
-				Dead
-			} */
-		//public float chaseRecalculationSeconds;
+		HealthAttributeAI health;
+		HungerAttributeAI hunger;
+		NavMeshAgent nav;
+		List<IAnimalAIBehaviour> behaviours;
+		Brain brain = new Brain();
 
-		//public string[] foodTags;
-		//	float chaseRecalculationTimer;
-		[HideInInspector] public NavMeshAgent nav;
-		[HideInInspector] public Animator animator;
-		//	HealthAttributeAI health;
-		//	HungerAttributeAI hunger;
-		AnimalIdleState idle;
-		AnimalState state;
-		AnimalWanderState wander;
-		//	Mood mood = Mood.Bored;
-		//	GameObject chanseTarget;
-		//	GameObject[] visibleFood = new GameObject[10]();
-
-		void Awake()
+		public void Awake()
 		{
-			animator = GetComponent<Animator>();
+			health = GetComponent<HealthAttributeAI>();
+			hunger = GetComponent<HungerAttributeAI>();
 			nav = GetComponent<NavMeshAgent>();
-			//	health = GetComponent<HealthAttributeAI>();
-			//	hunger = GetComponent<HungerAttributeAI>();
-			idle = GetComponent<AnimalIdleState>();
-			wander = GetComponent<AnimalWanderState>();
+			behaviours = GetComponents<IAnimalAIBehaviour>().ToList();
+			StartCoroutine("think");
 		}
 
-		void Start()
+		IEnumerator think()
 		{
-			changeState(typeof(AnimalIdleState));
+			while (true)
+			{
+				brain.Reset();
+				behaviours.ForEach(b => b.think(brain));
+				yield return new WaitForSeconds(1);
+			}
+
 		}
-
-		void Update()
-		{
-			animator.SetFloat("velocity", nav.velocity.magnitude);
-		}
-
-		public void changeState(Type statetype)
-		{
-			if (statetype.IsInstanceOfType(wander))
-			{
-				setState(wander);
-			}
-			else if (statetype.IsInstanceOfType(idle))
-			{
-				setState(idle);
-			}
-			else
-			{
-				Debug.Log("Unknown state " + statetype.ToString());
-			}
-		}
-
-		void setState(AnimalState newstate)
-		{
-			if (state != null) state.enabled = false;
-			state = newstate;
-			Debug.Log(">" + state.enabled);
-			state.enabled = true;
-			Debug.Log("<" + state.enabled);
-		}
-
-		/* void Update()
-		{
-			if (health.getCurrent() == 0)
-			{
-				mood = Mood.Dead;
-				health.enabled = false;
-				hunger.enabled = false;
-				this.enabled = false;
-			}
-			switch (mood)
-			{
-				case Mood.Bored:
-					if (hunger.getCurrentPercent() <= 50)
-						mood = Mood.Hungry;
-					break;
-				case Mood.Hungry:
-					if (hunger.getCurrentPercent() >= 90)
-						mood = Mood.Bored;
-					else if (target == null)
-						startChase(findFood(huntRadius)); 
-					break;
-				case Mood.Aggressive:
-					//chase();
-					break;
-			}
-
-} */
-
-		/* void startChase(GameObject prey)
-		{
-			if (prey == null) return;
-			target = prey;
-			chaseRecalculationTimer = chaseRecalculationSeconds;
-			mood = Mood.Aggressive;
-		}
-
-		void chase()
-		{
-			chaseRecalculationTimer += Time.deltaTime;
-			if (chaseRecalculationTimer >= chaseRecalculationSeconds)
-			{
-				nav.SetDestination(target.transform.position);
-				chaseRecalculationTimer -= chaseRecalculationSeconds;
-			}
-		} */
-
 	}
+
 }

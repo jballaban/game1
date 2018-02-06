@@ -7,80 +7,54 @@ namespace Game.Scripts.Animal
 {
 	public class AttributeAI : MonoBehaviour
 	{
-		public float max; // the max attribute value
-		public float start; // the starting attribute value
-		public float regenPerSecond; // the amount of attribute to add per second of game time
-		public float regenDelaySeconds; // the number of seconds to pause regenerating after a value change
-		public Image bar; // UI bar
-		public Transform ui;
-		protected Animator animator;
-		float delaySeconds; // current delay seconds value
-		public float _current;
-		protected float current
+		[Tooltip("The maximum attribute value.  Can change at any time (but it will take a value change to clamp it to new value)")]
+		public float max;
+		[Tooltip("The amount of attribute to add (or subtract) per second.  Use 0 to disable regeneration.  Can change at any time.")]
+		public float regenPerSecond;
+		[Tooltip("Optional UI bar to update to show current value")]
+		public Image bar;
+
+		public float current // current value
 		{
+			get { return _current; }
 			set
 			{
-				_current = value;
+				_current = Mathf.Clamp(value, 0, max);
 				if (bar != null)
-					bar.fillAmount = current / max;
-			}
-			get
-			{
-				return _current;
+					bar.fillAmount = currentPercent;
 			}
 		}
-		float regenTimer;
-		float delayTimer;
+		public float currentPercent { get { return _current / max; } } // current value as a percent of max
+		bool regenerating; // true if object is currently regenerating
+		float _current; // internal current value
 
-		public virtual void Start()
+		public virtual void Awake()
 		{
-			animator = GetComponent<Animator>();
-			ui = bar.transform.parent;
-			current = start;
+			current = max;
 		}
 
 		public virtual void Update()
 		{
-			Vector3 targetPostition = new Vector3(Camera.main.transform.position.x,
-										Camera.main.transform.position.y,
-										Camera.main.transform.position.z);
-			ui.LookAt(targetPostition);
-			if (delaySeconds > 0) // if we are in a delay lets see if it's done 
+			if (!regenerating && canRegen())
 			{
-				delayTimer += Time.deltaTime;
-				if (delayTimer >= delaySeconds) // we've completed our delay
-				{
-					delaySeconds = 0;
-					regenTimer = 0; // start a new generating timer
-				}
-			}
-			if (delaySeconds == 0) // if we're not in a delay state lets regen!
-			{
-				regenTimer += Time.deltaTime;
-				if (regenTimer > 1) // regens are per second
-				{
-					current = Mathf.Clamp(current + regenPerSecond, 0, max);
-					regenTimer -= 1; // remove a second from the clock
-				}
+				StartCoroutine("Regen");
 			}
 		}
 
-		public void Inc(float amount)
+		IEnumerator Regen()
 		{
-			current = Mathf.Clamp(current + amount, 0, max);
-			regenTimer = 0;
-			delaySeconds = regenDelaySeconds;
-			delayTimer = 0;
+			regenerating = true;
+			while (canRegen())
+			{
+				current += regenPerSecond;
+				yield return new WaitForSeconds(1);
+			}
+			regenerating = false;
 		}
 
-		public float getCurrent()
+		bool canRegen()
 		{
-			return current;
-		}
-
-		public int getCurrentPercent()
-		{
-			return Mathf.CeilToInt(max / current);
+			return regenPerSecond != 0;
 		}
 
 	}
