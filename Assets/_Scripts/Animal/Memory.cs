@@ -7,67 +7,41 @@ using System.Collections.Generic;
 namespace Game.Scripts.Animal
 {
 
-	public abstract class RecollectionManager
-	{
-		float _strength;
-		public float strength
-		{
-			get { return _strength; }
-			set { _strength = Mathf.Max(0, value); }
-		}
-		public abstract void Process();
-	}
-
-	public class FadingRecollectionManager : RecollectionManager
-	{
-		public float fadePerSecond;
-		public override void Process()
-		{
-			strength -= fadePerSecond * Time.deltaTime;
-		}
-	}
-
 	public class Recollection
 	{
-		public RecollectionManager manager;
+		public float strength;
 		public object information;
 		public object reference;
 	}
 
-	public class Memory
+	public class Memory : MonoBehaviour
 	{
+		const float FORGET_RATE = .1f;
 		List<Recollection> toRemember = new List<Recollection>();
 		List<Recollection> recollections = new List<Recollection>();
-		Dictionary<object, List<Recollection>> recollectionIndex = new Dictionary<object, List<Recollection>>();
 
-		public void Process()
+		void Update()
 		{
-			recollections.ForEach(r => r.manager.Process());
-			recollections.Where(r => r.manager.strength == 0).ToList().ForEach(r => Forget(r));
+			recollections.ForEach(r => r.strength = Mathf.Max(0, r.strength - FORGET_RATE * Time.deltaTime));
+			recollections.Where(r => r.strength == 0).ToList().ForEach(r => Forget(r));
 			PersistNewKnowledge();
 		}
 
-		public Recollection Know(object reference, object information, RecollectionManager manager)
+		public Recollection Know(object reference, object information, float strength)
 		{
-			Recollection recollection = new Recollection() { manager = manager, information = information, reference = reference };
+			Recollection recollection = new Recollection() { strength = strength, information = information, reference = reference };
 			toRemember.Add(recollection);
 			return recollection;
 		}
 
 		public void Forget(object reference)
 		{
-			if (recollectionIndex[reference] == null) return;
-			recollectionIndex[reference].ForEach(r => recollections.Remove(r));
-			recollectionIndex.Remove(reference);
+			recollections.RemoveAll(r => r.reference == reference);
 		}
 
 		public void Forget(Recollection recollection)
 		{
 			recollections.Remove(recollection);
-			if (recollectionIndex[recollection.reference] == null) return;
-			recollectionIndex[recollection.reference].Remove(recollection);
-			if (recollectionIndex[recollection.reference].Count == 0)
-				recollectionIndex.Remove(recollection.reference);
 		}
 
 		void PersistNewKnowledge()
@@ -78,9 +52,6 @@ namespace Game.Scripts.Animal
 
 		void Remember(Recollection recollection)
 		{
-			if (!recollectionIndex.ContainsKey(recollection.reference))
-				recollectionIndex.Add(recollection.reference, new List<Recollection>());
-			recollectionIndex[recollection.reference].Add(recollection);
 			recollections.Add(recollection);
 		}
 

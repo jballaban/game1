@@ -6,23 +6,18 @@ namespace Game.Scripts.AI
 {
 	public class AgeAttributeAI : AttributeAI
 	{
-		[Tooltip("max property will be overriden with a random value between 1 and maxLifeSpan (years).")]
-		public float maxPossibleLifeSpan;
 		[Tooltip("How much the model will scale (additive) per day")]
 		public float physicalGrowthPerDay;
-		public List<IGrowthAttributeAI> growthAttributes = new List<IGrowthAttributeAI>();
-		HealthAttributeAI health;
+		internal List<IGrowthAttributeAI> growthAttributes = new List<IGrowthAttributeAI>();
+		public RandomMaxAttributeAIBehavour maxValue;
 		Transform animal;
 
-		void Awake()
+		public override void Awake()
 		{
-			health = GetComponent<HealthAttributeAI>();
-			if (health == null)
-				Debug.LogError("Missing required HealthAttributeAI");
-			if (maxPossibleLifeSpan == 0)
-				Debug.LogError("Missing required maxPossibleLifeSpan value");
+			behaviours.Add(maxValue);
+			base.Awake();
+			current = 0;
 			animal = gameObject.transform.GetChild(0);
-			currentMax = Random.Range(1, maxPossibleLifeSpan);
 			StartCoroutine("Grow");
 		}
 

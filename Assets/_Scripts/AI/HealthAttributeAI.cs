@@ -3,34 +3,31 @@ using UnityEngine;
 
 namespace Game.Scripts.AI
 {
-	public class HealthAttributeAI : RegeneratingAttributeAI, IGrowthAttributeAI
+	[RequireComponent(typeof(AgeAttributeAI))]
+	public class HealthAttributeAI : AttributeAI, IGrowthAttributeAI, IDynamicRegenAttributeAI
 	{
-
 		[Tooltip("Dead or alive")]
 		public bool alive = true;
 		[Tooltip("The amount that the currentMax health will increase per day")]
 		public float maxGrowthPerDay;
 		AgeAttributeAI age;
+		public RegenAttributeAIBehaviour regen;
+		public RandomMaxAttributeAIBehavour maxValue;
+		public UpdateUIAttributeAIBehaviour updateBar;
 		public override void Awake()
 		{
+			behaviours.Add(regen);
+			behaviours.Add(maxValue);
+			if (updateBar != null)
+				behaviours.Add(updateBar);
 			base.Awake();
 			age = GetComponent<AgeAttributeAI>();
-			if (age == null)
-				Debug.LogError("Health attribute depends on AgeAttribute");
 			age.growthAttributes.Add(this);
 		}
 
-		public override void Update()
+		public float getRegenRate(float rate)
 		{
-			if (!alive) return;
-			base.Update();
-			if (current == 0)
-				Die();
-		}
-
-		public override float getRegenRate()
-		{
-			return (regenRate / age.currentPercent) * Time.deltaTime;
+			return (rate / age.currentPercent);
 		}
 
 		public void Grow()
@@ -39,11 +36,23 @@ namespace Game.Scripts.AI
 				currentMax += maxGrowthPerDay;
 		}
 
+		public void takeDamage(float amount)
+		{
+			current -= amount;
+			if (current == 0)
+				Die();
+		}
+
 		public void Die()
 		{
 			current = 0;
 			alive = false;
 			Debug.Log("Dead");
+		}
+
+		public float getRegenRate(AttributeAI attribute)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
