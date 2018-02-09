@@ -191,13 +191,11 @@ GameObject:
   m_Component:
   - component: {fileID: 177214459}
   - component: {fileID: 177214463}
-  - component: {fileID: 177214462}
-  - component: {fileID: 177214461}
   - component: {fileID: 177214468}
   - component: {fileID: 177214460}
   - component: {fileID: 177214469}
-  - component: {fileID: 177214464}
-  - component: {fileID: 177214465}
+  - component: {fileID: 177214461}
+  - component: {fileID: 177214462}
   m_Layer: 0
   m_Name: Wolf
   m_TagString: Animal
@@ -236,34 +234,35 @@ SphereCollider:
 --- !u!114 &177214461
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114379520614011744, guid: 59b1c5e7f4c59db498ba465f2f9feb09,
-    type: 2}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 177214458}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46923862fab9ffe48969523b135281a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dee212ecbcf5e24c9d0027c9c7107ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  max: 100
-  regenPerSecond: 0.1
-  bar: {fileID: 1278869838}
+  currentMax: 0
+  _current: 0
+  maxPossibleLifeSpan: 10
+  physicalGrowthPerDay: 0.01
 --- !u!114 &177214462
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114679808816753238, guid: 59b1c5e7f4c59db498ba465f2f9feb09,
-    type: 2}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 177214458}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f7ad271623bb2c45bdd597993818b60, type: 3}
+  m_Script: {fileID: 11500000, guid: 1aafe525864c1324bbc36040eb16057f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  max: 10
-  regenPerSecond: -1
-  bar: {fileID: 265484026}
-  starvationPerSecond: 1
+  currentMax: 0
+  _current: 0
+  maxPossibleValue: 0
+  regenRate: 1
+  alive: 1
+  maxGrowthPerDay: 1
 --- !u!195 &177214463
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -286,33 +285,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &177214464
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 177214458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f562d961c8b337e45843ce95eda6b5ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  secondsBetweenThoughts: 1
---- !u!114 &177214465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 177214458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf93b46fab029aa429ba993fcb501282, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wanderDistance: 10
-  closeness: 0.1
-  speed: 2
-  maxIdleTime: 5
 --- !u!54 &177214468
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -691,8 +663,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 350653305}
-  m_LocalRotation: {x: -0.15376744, y: 0.3034902, z: -0.04969652, w: -0.9390312}
-  m_LocalPosition: {x: 15.5764065, y: 2.46108, z: 6.6648574}
+  m_LocalRotation: {x: 0.16704117, y: 0.77753645, z: -0.2318657, w: 0.56015414}
+  m_LocalPosition: {x: 9.531741, y: 5.272323, z: 15.627359}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2697,6 +2669,7 @@ Prefab:
     - {fileID: 114120858540624266, guid: 1bf4fa71f083f324a9349b41f5fce8d0, type: 2}
     - {fileID: 114059435256998114, guid: 1bf4fa71f083f324a9349b41f5fce8d0, type: 2}
     - {fileID: 114862893800588188, guid: 1bf4fa71f083f324a9349b41f5fce8d0, type: 2}
+    - {fileID: 114746724017605910, guid: 1bf4fa71f083f324a9349b41f5fce8d0, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1bf4fa71f083f324a9349b41f5fce8d0, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &2020738281 stripped
