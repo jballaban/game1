@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Game.Scripts.AI
+namespace Game.Scripts.AI.Attribute
 {
 	[RequireComponent(typeof(AgeAttributeAI))]
 	public class HungerAttributeAI : AttributeAI, IGrowthAttributeAI

@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 177214469}
   - component: {fileID: 177214461}
   - component: {fileID: 177214462}
+  - component: {fileID: 177214464}
   m_Layer: 0
   m_Name: Wolf
   m_TagString: Animal
@@ -244,8 +245,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentMax: 0
   _current: 0
-  maxPossibleLifeSpan: 10
   physicalGrowthPerDay: 0.01
+  maxValue:
+    maxPossibleValue: 100
+    minPossibleValue: 1
 --- !u!114 &177214462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,10 +262,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentMax: 0
   _current: 0
-  maxPossibleValue: 0
-  regenRate: 1
   alive: 1
   maxGrowthPerDay: 1
+  regen:
+    regenRate: 0.001
+  maxValue:
+    maxPossibleValue: 10
+    minPossibleValue: 1
+  updateBar:
+    bar: {fileID: 1278869838}
 --- !u!195 &177214463
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -285,6 +293,28 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &177214464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 177214458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c8b2f452b1d4e41bd5bd5583f2b915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMax: 0
+  _current: 0
+  maxGrowthPerDay: 1
+  starvationDamage: 1
+  maxValue:
+    maxPossibleValue: 10
+    minPossibleValue: 1
+  regen:
+    regenRate: -1
+  updateBar:
+    bar: {fileID: 265484026}
 --- !u!54 &177214468
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1625,7 +1655,7 @@ Transform:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1386448413}
-  m_LocalRotation: {x: 0.8308802, y: -0.5546748, z: -0.043763265, w: 0.0076705553}
+  m_LocalRotation: {x: 0.8308801, y: -0.55467474, z: -0.04376326, w: 0.0076705543}
   m_LocalPosition: {x: -0.00000017166137, y: -0.00000015258789, z: -0.10517512}
   m_LocalScale: {x: 1, y: 1.0000001, z: 1}
   m_Children:
@@ -2020,7 +2050,7 @@ Transform:
   m_GameObject: {fileID: 1599644810}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 1522083842}
   - {fileID: 1670421912}

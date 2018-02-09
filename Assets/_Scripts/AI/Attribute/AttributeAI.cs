@@ -3,18 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.Scripts.AI
+namespace Game.Scripts.AI.Attribute
 {
-	public interface IGrowthAttributeAI
-	{
-		void Grow();
-	}
-
-	public interface IDynamicRegenAttributeAI
-	{
-		float getRegenRate(float regenRate);
-	}
-
 	[RequireComponent(typeof(HealthAttributeAI))]
 	public abstract class AttributeAI : MonoBehaviour
 	{
