@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Animal
+  - Water
+  - Fly
   layers:
   - Default
   - TransparentFX
@@ -26,7 +28,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Animal
   - 
   - 
   - 
