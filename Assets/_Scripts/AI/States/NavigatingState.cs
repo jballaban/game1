@@ -26,7 +26,6 @@ namespace Game.Scripts.AI.States
 		private GoToState currentState;
 		private NavMeshAgent nav;
 		public bool WorkInFixedUpdate;
-		public float Speed;
 		// when the magnitude of the difference between the objective and self is <= of this then we're done
 		public float MinDistanceToObjective = 0.5f;
 
@@ -56,6 +55,10 @@ namespace Game.Scripts.AI.States
 		protected virtual void Tick()
 		{
 			var objectivePosition = objectiveTransform != null ? objectiveTransform.position : objective.GetValueOrDefault();
+			if (nav.remainingDistance <= MinDistanceToObjective)
+			{
+				currentState = GoToState.Success;
+			}
 		}
 
 		#endregion
@@ -95,6 +98,11 @@ namespace Game.Scripts.AI.States
 			currentState = GoToState.Pulsed;
 			onDoneMovementCallback = onDoneMovement;
 			onFailureMovementCallback = onFailureMovement;
+		}
+
+		public override void Enter()
+		{
+			base.Enter();
 			if (nav.SetDestination(objective.Value))
 			{
 				nav.isStopped = false;
