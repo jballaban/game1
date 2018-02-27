@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Game.Scripts.AI.Core;
+using Game.Scripts.AI.Actions;
 
 namespace Game.Scripts.AI.Sensors
 {
@@ -18,7 +19,7 @@ namespace Game.Scripts.AI.Sensors
 			var state = memory.GetWorldState();
 			foreach (var pair in resourcesBag.GetResources())
 			{
-				state.Set("hasResource" + pair.Key, pair.Value > 0);
+				state.Set(GatherResourceAction.KEY_HASRESOURCE + pair.Key, pair.Value > 0);
 			}
 		}
 	}

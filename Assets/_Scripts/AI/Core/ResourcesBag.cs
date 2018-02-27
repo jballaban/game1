@@ -7,7 +7,8 @@ namespace Game.Scripts.AI.Core
 {
 	public class ResourcesBag : MonoBehaviour
 	{
-		private Dictionary<string, float> resources;
+		public Dictionary<string, float> resources;
+		public float _trees; // readonly view of tree resources
 
 		void Awake()
 		{
@@ -19,6 +20,8 @@ namespace Game.Scripts.AI.Core
 			if (!resources.ContainsKey(resourceName))
 				resources[resourceName] = 0;
 			resources[resourceName] += value;
+			if (resourceName == "Tree")
+				_trees = resources[resourceName];
 		}
 
 		public float GetResource(string resourceName)
@@ -36,6 +39,8 @@ namespace Game.Scripts.AI.Core
 		public void RemoveResource(string resourceName, float value)
 		{
 			resources[resourceName] -= value;
+			if (resourceName == "Tree")
+				_trees = resources[resourceName];
 		}
 	}
 }

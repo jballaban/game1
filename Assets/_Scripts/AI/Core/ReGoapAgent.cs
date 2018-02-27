@@ -231,7 +231,7 @@ namespace Game.Scripts.AI.Core
 				ReGoapLogger.LogWarning(string.Format("[GoapAgent] Action {0} warned for failure but is not current action.", thisAction));
 				return;
 			}
-			if (BlackListGoalOnFailure)
+			if (BlackListGoalOnFailure && currentGoal != null)
 				goalBlacklist[currentGoal] = Time.time + currentGoal.GetErrorDelay();
 			CalculateNewGoal(true);
 		}

@@ -5,7 +5,7 @@ using Game.Scripts.AI.Core.FSM;
 
 namespace Game.Scripts.AI.States
 {
-	public class IdleState : SmState
+	public class IdleState : State
 	{
 	}
 }

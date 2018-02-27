@@ -10,6 +10,7 @@ namespace Game.Scripts.AI.Managers
 	{
 		public static MultipleResourcesManager Instance;
 
+		public GameObject ResourceRoot;
 		public Dictionary<string, IResourceManager> Resources;
 
 		void Awake()
@@ -17,7 +18,7 @@ namespace Game.Scripts.AI.Managers
 			if (Instance != null)
 				throw new UnityException("[ResourcesManager] Can have only one instance per scene.");
 			Instance = this;
-			var childResources = GetComponentsInChildren<IResource>();
+			var childResources = ResourceRoot.GetComponentsInChildren<IResource>();
 			Resources = new Dictionary<string, IResourceManager>(childResources.Length);
 			foreach (var resource in childResources)
 			{

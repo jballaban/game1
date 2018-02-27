@@ -14,6 +14,7 @@ namespace Game.Scripts.AI.Actions
 		protected IResource resource;
 
 		private float gatherCooldown;
+		public const string KEY_HASRESOURCE = "hasResource:";
 
 		protected override void Awake()
 		{
@@ -25,9 +26,9 @@ namespace Game.Scripts.AI.Actions
 		{
 			foreach (var pair in goalState.GetValues())
 			{
-				if (pair.Key.StartsWith("hasResource"))
+				if (pair.Key.StartsWith(KEY_HASRESOURCE))
 				{
-					return pair.Key.Substring(11);
+					return pair.Key.Substring(KEY_HASRESOURCE.Length);
 				}
 			}
 			return null;
@@ -44,7 +45,7 @@ namespace Game.Scripts.AI.Actions
 				{
 					resourcePosition = agent.GetMemory().GetWorldState()
 						.Get(string.Format("nearest{0}Position", newNeededResourceName)) as Vector3?;
-					preconditions.Set("isAtPosition", resourcePosition);
+					preconditions.Set(NavigateAction.KEY_ISATPOSITION, resourcePosition);
 				}
 			}
 			return preconditions;
@@ -60,7 +61,7 @@ namespace Game.Scripts.AI.Actions
 				if (resource != null)
 				{
 					resourcePosition = agent.GetMemory().GetWorldState().Get(string.Format("nearest{0}Position", newNeededResourceName)) as Vector3?;
-					effects.Set("hasResource" + newNeededResourceName, true);
+					effects.Set(KEY_HASRESOURCE + newNeededResourceName, true);
 				}
 			}
 			return effects;

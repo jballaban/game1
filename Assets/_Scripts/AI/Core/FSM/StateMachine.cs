@@ -7,15 +7,15 @@ namespace Game.Scripts.AI.Core.FSM
 	// simple FSM, feel free to use this or your own or unity animator's behaviour or anything you like with ReGoap
 	public class StateMachine : MonoBehaviour
 	{
-		private Dictionary<Type, ISmState> states;
+		private Dictionary<Type, IState> states;
 		private Dictionary<string, object> values;
 		private static Dictionary<string, object> globalValues;
-		private List<ISmTransistion> genericTransistions;
+		private List<IStateTransition> genericTransistions;
 
 		public bool enableStackedStates;
-		public Stack<ISmState> currentStates;
+		public Stack<IState> currentStates;
 
-		public ISmState CurrentState
+		public IState CurrentState
 		{
 			get
 			{
@@ -25,7 +25,7 @@ namespace Game.Scripts.AI.Core.FSM
 			}
 		}
 
-		private ISmState currentState;
+		private IState currentState;
 
 		public MonoBehaviour initialState;
 
@@ -42,16 +42,16 @@ namespace Game.Scripts.AI.Core.FSM
 		void Awake()
 		{
 			enabled = true;
-			states = new Dictionary<Type, ISmState>();
+			states = new Dictionary<Type, IState>();
 			values = new Dictionary<string, object>();
-			currentStates = new Stack<ISmState>();
-			genericTransistions = new List<ISmTransistion>();
+			currentStates = new Stack<IState>();
+			genericTransistions = new List<IStateTransition>();
 			globalValues = new Dictionary<string, object>();
 		}
 
 		void Start()
 		{
-			foreach (var state in GetComponents<ISmState>())
+			foreach (var state in GetComponents<IState>())
 			{
 				AddState(state);
 				var monoB = (MonoBehaviour)state;
@@ -60,13 +60,13 @@ namespace Game.Scripts.AI.Core.FSM
 			Switch(initialState.GetType());
 		}
 
-		public void AddState(ISmState state)
+		public void AddState(IState state)
 		{
 			state.Init(this);
 			states[state.GetType()] = state;
 		}
 
-		public void AddGenericTransistion(ISmTransistion func)
+		public void AddGenericTransistion(IStateTransition func)
 		{
 			genericTransistions.Add(func);
 			if (orderTransistions)
@@ -138,7 +138,7 @@ namespace Game.Scripts.AI.Core.FSM
 			}
 		}
 
-		public void Switch<T>() where T : MonoBehaviour, ISmState
+		public void Switch<T>() where T : MonoBehaviour, IState
 		{
 			Switch(typeof(T));
 		}

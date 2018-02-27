@@ -11,7 +11,7 @@ namespace Game.Scripts.AI.States
 	//  (ex. tell the library to search a path in Enter, when done move to the next waypoint in Tick)
 	[RequireComponent(typeof(StateMachine))]
 	[RequireComponent(typeof(IdleState))]
-	public class MovingState : SmState
+	public class MovingState : State
 	{
 		private Vector3? objective;
 		private Transform objectiveTransform;
@@ -129,14 +129,14 @@ namespace Game.Scripts.AI.States
 			Transistions.Add(doneTransistion);
 		}
 
-		private Type DoneTransistion(ISmState state)
+		private Type DoneTransistion(IState state)
 		{
 			if (currentState != GoToState.Active)
 				return typeof(IdleState);
 			return null;
 		}
 
-		private Type Transistion(ISmState state)
+		private Type Transistion(IState state)
 		{
 			if (currentState == GoToState.Pulsed)
 				return typeof(MovingState);

@@ -6,15 +6,15 @@ using UnityEngine;
 
 namespace Game.Scripts.AI.Core.FSM
 {
-	public class SmState : MonoBehaviour, ISmState
+	public class State : MonoBehaviour, IState
 	{
-		public List<ISmTransistion> Transistions { get; set; }
+		public List<IStateTransition> Transistions { get; set; }
 		public int priority;
 
 		#region UnityFunctions
 		protected virtual void Awake()
 		{
-			Transistions = new List<ISmTransistion>();
+			Transistions = new List<IStateTransition>();
 		}
 		protected virtual void Start()
 		{

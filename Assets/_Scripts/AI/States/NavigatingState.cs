@@ -12,10 +12,10 @@ namespace Game.Scripts.AI.States
 	//  (ex. tell the library to search a path in Enter, when done move to the next waypoint in Tick)
 	[RequireComponent(typeof(StateMachine))]
 	[RequireComponent(typeof(IdleState))]
-	public class NavigatingState : SmState
+	public class NavigatingState : State
 	{
 		private Vector3? objective;
-		private Transform objectiveTransform;
+		//private Transform objectiveTransform;
 		private Action onDoneMovementCallback;
 		private Action onFailureMovementCallback;
 
@@ -54,7 +54,7 @@ namespace Game.Scripts.AI.States
 		//  set the animator variables (if you want to use root motion then also override MoveTo)
 		protected virtual void Tick()
 		{
-			var objectivePosition = objectiveTransform != null ? objectiveTransform.position : objective.GetValueOrDefault();
+			//			var objectivePosition = objectiveTransform != null ? objectiveTransform.position : objective.GetValueOrDefault();
 			if (nav.remainingDistance <= MinDistanceToObjective)
 			{
 				currentState = GoToState.Success;
@@ -73,14 +73,14 @@ namespace Game.Scripts.AI.States
 			Transistions.Add(doneTransistion);
 		}
 
-		private Type DoneTransistion(ISmState state)
+		private Type DoneTransistion(IState state)
 		{
 			if (currentState != GoToState.Active)
 				return typeof(IdleState);
 			return null;
 		}
 
-		private Type Transistion(ISmState state)
+		private Type Transistion(IState state)
 		{
 			if (currentState == GoToState.Pulsed)
 				return typeof(NavigatingState);
