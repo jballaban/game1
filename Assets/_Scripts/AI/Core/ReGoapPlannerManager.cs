@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using ReGoap.Core;
+using ReGoap.Planner;
 
 // every thread runs on one of these classes
 namespace Game.Scripts.AI.Core

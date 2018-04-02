@@ -14,6 +14,8 @@ namespace Game.Scripts.AI.Goals
 		{
 			base.Awake();
 			goal.Set(GatherResourceAction.KEY_HASRESOURCE + ResourceName, true);
+			if (Amount > 0)
+				goal.Set(GatherResourceAction.KEY_HASRESOURCEAMOUNT + ResourceName, Amount);
 		}
 
 		public override string ToString()

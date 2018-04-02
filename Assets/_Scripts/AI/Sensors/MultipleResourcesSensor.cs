@@ -26,7 +26,7 @@ namespace Game.Scripts.AI.Sensors
 
 				UpdateResources(resourceManager);
 
-				var nearestResource = Utilities.GetNearest(transform.position, resourcesPosition);
+				var nearestResource = ReGoap.Unity.FSMExample.OtherScripts.Utilities.GetNearest(transform.position, resourcesPosition);
 				worldState.Set("nearest" + resourceManager.GetResourceName(), nearestResource);
 				worldState.Set("nearest" + resourceManager.GetResourceName() + "Position",
 					(Vector3?)(nearestResource != null ? nearestResource.GetTransform().position : Vector3.zero));

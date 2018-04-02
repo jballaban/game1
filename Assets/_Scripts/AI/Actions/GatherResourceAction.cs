@@ -2,19 +2,20 @@
 using UnityEngine;
 using System.Collections;
 using Game.Scripts.AI.Core;
+using ReGoap.Core;
 
 namespace Game.Scripts.AI.Actions
 {
 	public class GatherResourceAction : ReGoapAction<string, object>
 	{
 		public float TimeToGather = 0.5f;
-		public float ResourcePerAction = 1f;
+		public float ResourcePerAction = .5f;
 		protected ResourcesBag bag;
 		protected Vector3? resourcePosition;
 		protected IResource resource;
-
 		private float gatherCooldown;
 		public const string KEY_HASRESOURCE = "hasResource:";
+		public const string KEY_HASRESOURCEAMOUNT = "hasResourceAmount:";
 
 		protected override void Awake()
 		{
@@ -29,6 +30,10 @@ namespace Game.Scripts.AI.Actions
 				if (pair.Key.StartsWith(KEY_HASRESOURCE))
 				{
 					return pair.Key.Substring(KEY_HASRESOURCE.Length);
+				}
+				else if (pair.Key.StartsWith(KEY_HASRESOURCEAMOUNT))
+				{
+					return pair.Key.Substring(KEY_HASRESOURCEAMOUNT.Length);
 				}
 			}
 			return null;
@@ -62,6 +67,8 @@ namespace Game.Scripts.AI.Actions
 				{
 					resourcePosition = agent.GetMemory().GetWorldState().Get(string.Format("nearest{0}Position", newNeededResourceName)) as Vector3?;
 					effects.Set(KEY_HASRESOURCE + newNeededResourceName, true);
+					float? currentlyholding = (float?)agent.GetMemory().GetWorldState().Get(KEY_HASRESOURCEAMOUNT + newNeededResourceName);
+					effects.Set(KEY_HASRESOURCEAMOUNT + newNeededResourceName, (currentlyholding ?? 0f) + Math.Min(ResourcePerAction, resource.GetCapacity()));
 				}
 			}
 			return effects;
@@ -98,7 +105,7 @@ namespace Game.Scripts.AI.Actions
 		{
 			base.Run(previous, next, settings, goalState, done, fail);
 			SetNeededResources(settings);
-			if (resource == null || resource.GetCapacity() < ResourcePerAction)
+			if (resource == null || resource.IsDepleted())
 				failCallback(this);
 			else
 			{
@@ -117,7 +124,7 @@ namespace Game.Scripts.AI.Actions
 		{
 			base.Update();
 
-			if (resource == null || resource.GetCapacity() < ResourcePerAction)
+			if (resource == null || resource.IsDepleted())
 				failCallback(this);
 			else if (Time.time > gatherCooldown)
 			{

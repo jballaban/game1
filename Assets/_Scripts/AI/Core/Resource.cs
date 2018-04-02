@@ -11,6 +11,7 @@ namespace Game.Scripts.AI.Core
 	{
 		public string ResourceName;
 		public float Capacity = 1f;
+		public bool IsDepleted() { return Capacity == 0f; }
 		protected float startingCapacity;
 
 		protected virtual void Awake()
@@ -45,6 +46,7 @@ namespace Game.Scripts.AI.Core
 		Transform GetTransform();
 		float GetCapacity();
 		void RemoveResource(float value);
+		bool IsDepleted();
 	}
 
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ReGoap.Core;
 using UnityEngine;
 
 namespace Game.Scripts.AI.Core
@@ -32,6 +33,14 @@ namespace Game.Scripts.AI.Core
 		public bool IsPlanning
 		{
 			get { return CurrentReGoapPlanWorker != null && CurrentReGoapPlanWorker.Value.NewGoal == null; }
+		}
+
+		public bool debugPlan
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
 		}
 
 		public bool WorkInFixedUpdate;
@@ -346,6 +355,11 @@ namespace Game.Scripts.AI.Core
 		public virtual Type[] GetGenericArguments()
 		{
 			return GetType().BaseType.GetGenericArguments();
+		}
+
+		Queue<ReGoapActionState<T, W>> IReGoapAgent<T, W>.GetStartingPlan()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

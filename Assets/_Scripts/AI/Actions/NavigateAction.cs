@@ -7,6 +7,7 @@ using UnityEngine.VR;
 using Game.Scripts.AI.Core.FSM;
 using Game.Scripts.AI.Core;
 using Game.Scripts.AI.States;
+using ReGoap.Core;
 
 namespace Game.Scripts.AI.Actions
 {

@@ -1,0 +1,95 @@
+﻿using System.Collections.Generic;
+using ReGoap.Core;
+using ReGoap.Unity.Test;
+using NUnit.Framework;
+using UnityEngine;
+
+namespace ReGoap.Unity.Editor.Test
+{
+    public class ReGoapTestsHelper
+    {
+        public static ReGoapTestAction GetCustomAction(GameObject gameObject, string name, Dictionary<string, object> preconditionsBools,
+            Dictionary<string, object> effectsBools, int cost = 1)
+        {
+            var effects = ReGoapState<string, object>.Instantiate();
+            var preconditions = ReGoapState<string, object>.Instantiate();
+            var customAction = gameObject.AddComponent<ReGoapTestAction>();
+            customAction.Name = name;
+            customAction.Init();
+            foreach (var pair in effectsBools)
+                _AddIntoReGoapState(effects, pair.Key, pair.Value);
+            customAction.SetEffects(effects);
+            foreach (var pair in preconditionsBools)
+                _AddIntoReGoapState(preconditions, pair.Key, pair.Value);
+            customAction.SetPreconditions(preconditions);
+            customAction.Cost = cost;
+            return customAction;
+        }
+
+        private static void _AddIntoReGoapState(ReGoapState<string, object> st, string key, object v)
+        {
+            if( key.StartsWith("Int") )
+            {
+                st.SetStructValue(key, StructValue.CreateIntArithmetic((int)v) );
+            }
+            else if (key.StartsWith("Float"))
+            {
+                st.SetStructValue(key, StructValue.CreateFloatArithmetic((float)v));
+            }
+            else if(key.StartsWith("NInt"))
+            {
+                st.SetStructValue(key, StructValue.CreateIntArithmetic((int)v, neg : true));
+            }
+            else if(key.StartsWith("NFloat"))
+            {
+                st.SetStructValue(key, StructValue.CreateFloatArithmetic((float)v, neg: true));
+            }
+            else
+            {
+                st.Set(key, v);
+            }
+        }
+
+        public static ReGoapTestGoal GetCustomGoal(GameObject gameObject, string name, Dictionary<string, object> goalState, int priority = 1)
+        {
+            var customGoal = gameObject.AddComponent<ReGoapTestGoal>();
+            customGoal.Name = name;
+            customGoal.SetPriority(priority);
+            customGoal.Init();
+            var goal = ReGoapState<string, object>.Instantiate();
+            foreach (var pair in goalState)
+            {
+                //goal.Set(pair.Key, pair.Value);
+                _AddIntoReGoapState(goal, pair.Key, pair.Value);
+            }
+            customGoal.SetGoalState(goal);
+            return customGoal;
+        }
+
+        public static void ApplyAndValidatePlan(IReGoapGoal<string, object> plan, ReGoapTestMemory memory)
+        {
+            foreach (var action in plan.GetPlan())
+            {
+                Assert.That(action.Action.GetPreconditions(plan.GetGoalState()).MissingDifference(memory.GetWorldState(), 1) == 0);
+                foreach (var effectsPair in action.Action.GetEffects(plan.GetGoalState()).GetValues())
+                {   // in a real game this should be done by memory itself
+                    //  e.x. isNearTarget = (transform.position - target.position).magnitude < minRangeForCC
+                    string key = effectsPair.Key;
+                    StructValue curValue;
+                    StructValue endValue;
+
+                    if( memory.GetWorldState().GetValues().TryGetValue(key, out curValue) )
+                    {
+                        endValue = curValue.MergeWith(effectsPair.Value);
+                    }
+                    else
+                    {
+                        endValue = effectsPair.Value;
+                    }
+                    memory.SetStructValue(effectsPair.Key, endValue);
+                }
+            }
+            Assert.That(plan.GetGoalState().MissingDifference(memory.GetWorldState(), 1) == 0);
+        }
+    }
+}

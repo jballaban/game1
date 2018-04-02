@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ReGoap.Core;
 using UnityEngine;
 
 namespace Game.Scripts.AI.Core
