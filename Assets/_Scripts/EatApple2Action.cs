@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 using System;
+using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class EatApple2Action : GoapAction
 {
@@ -29,11 +31,17 @@ public class EatApple2Action : GoapAction
 
 	public override bool checkProceduralPrecondition(GameObject agent, BlackBoard bb)
 	{
+		Debug.Log("Recheck appletrees");
 		// find the nearest tree that we can chop
-		Apple2Component[] trees = (Apple2Component[])bb.GetData("appleTree");
-		if (trees.Count() == 0)
+		var trees = (List<Apple2Component>)bb.GetData("appleTree");
+		var targettransform = Utility.GetNearest(agent.GetComponent<NavMeshAgent>(), trees.Where(t => t.current > 0).Select(t => t.transform).ToList());
+		if (targettransform == null)
+		{
+			target = null;
+			targetAppleTree = null;
 			return false;
-		targetAppleTree = trees.OrderByDescending(a => (a.gameObject.transform.position - agent.transform.position).magnitude).First();
+		}
+		targetAppleTree = targettransform.GetComponentInParent<Apple2Component>();
 		target = targetAppleTree.gameObject;
 		return true;
 	}
@@ -45,9 +53,10 @@ public class EatApple2Action : GoapAction
 
 		if (Time.time - startTime > workDuration)
 		{
+			Debug.Log("Bite " + targetAppleTree.current);
 			// finished chopping
 			Brain2 brain = (Brain2)agent.GetComponent(typeof(Brain2));
-			brain.Hunger = Math.Min(100, brain.Hunger + 50);
+			brain.Hunger += targetAppleTree.consume(50);
 			eaten = true;
 		}
 		return true;

@@ -22,7 +22,7 @@ public enum GoalWeightings : int
 public class Brain2 : MonoBehaviour, IBrain
 {
 	public int Hunger = 100;
-	public int Stamina = 100;
+	//public int Stamina = 100;
 	public void Init()
 	{
 		foreach (var goal in Enum.GetNames(typeof(Goals2)))
@@ -36,7 +36,7 @@ public class Brain2 : MonoBehaviour, IBrain
 		if (_costTime >= 1)
 		{
 			Hunger -= 2;
-			Stamina -= 2;
+			//Stamina -= 2;
 			_costTime = 0;
 		}
 	}
@@ -48,7 +48,7 @@ public class Brain2 : MonoBehaviour, IBrain
 		{ 10, GoalWeightings.Critical},
 		{ 30, GoalWeightings.High},
 		{ 60, GoalWeightings.Normal},
-		{ 100, GoalWeightings.Low}
+		{ Int32.MaxValue, GoalWeightings.Low}
 	};
 
 	protected virtual int GetWeight(Goals2 goal)

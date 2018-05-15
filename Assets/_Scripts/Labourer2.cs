@@ -16,6 +16,7 @@ public abstract class Labourer2 : MonoBehaviour, IGoap
 	public float moveSpeed = 10;
 	public bool EnableLog = false;
 	NavMeshAgent nav;
+	ResourceManager resourceManager;
 
 	void Awake()
 	{
@@ -113,6 +114,7 @@ public abstract class Labourer2 : MonoBehaviour, IGoap
 	public virtual void Init()
 	{
 		if (nav == null) nav = gameObject.GetComponent<NavMeshAgent>();
+		if (resourceManager == null) resourceManager = FindObjectOfType<ResourceManager>();
 		if (backpack == null)
 			backpack = gameObject.AddComponent<Backpack2Component>();
 		/* 	if (backpack.tool == null)
@@ -137,7 +139,7 @@ public abstract class Labourer2 : MonoBehaviour, IGoap
 		//init blackboard
 		bb.AddData("backpack", backpack);
 		bb.AddData("brain", Brain);
-		bb.AddData("appleTree", FindObjectsOfType(typeof(Apple2Component)));
+		bb.AddData("appleTree", resourceManager.GetResources<Apple2Component>());
 		/* bb.AddData("ironRock", FindObjectsOfType(typeof(IronRockComponent)));
 		
 		bb.AddData("forge", FindObjectsOfType(typeof(ForgeComponent))); */

@@ -2,18 +2,5 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Apple2Component : MonoBehaviour
-{
-
-	// Use this for initialization
-	void Start()
-	{
-
-	}
-
-	// Update is called once per frame
-	void Update()
-	{
-
-	}
-}
+public class Apple2Component : ResourceComponent
+{ }
